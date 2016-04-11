@@ -2,12 +2,6 @@ webpack = require 'webpack'
 nib = require 'nib'
 {argv} = require 'yargs'
 
-loaders = [
-  { test: /\.coffee$/, loader: 'coffee' },
-  { test: /\.css$/, loader: 'style!css' },
-  { test: /\.styl/, loader: 'style!css!stylus'},
-]
-
 plugins = [
   new webpack.optimize.CommonsChunkPlugin('common.js'),
   new webpack.optimize.UglifyJsPlugin() unless argv.debug,
@@ -15,16 +9,22 @@ plugins = [
 
 module.exports =
   resolve:
-    extendsions: ['', '.js', '.coffee']
+    extensions: ['', '.webpack.js', '.js', '.coffee', '.styl']
     modulesDirectories: [
       'node_modules',
-      'scripts',
-      'styles',
+      'src/scripts',
+      'src/styles',
     ]
-  mobule:
-    loaders: loaders
+  output:
+    filename: 'bundle.js'
+  module:
+    loaders: [
+      { test: /\.coffee$/, loader: 'coffee-loader' },
+      { test: '\.css$/', loader: 'style!css' },
+      { test: '\.styl$/', loader: 'style!css!stylus' },
+    ]
   plugins: plugins.filter((item) -> item)
-  devtool: 'source-map' if argv.debug
+  devtool: if argv.debug then 'source-map' else ''
   cache: false
   stylus:
     use: [nib()]

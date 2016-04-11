@@ -1,7 +1,7 @@
 gulp = require 'gulp'
 webpack = require 'gulp-webpack'
 plumber = require 'gulp-plumber'
-stylus = require 'stylus'
+stylus = require 'gulp-stylus'
 path = require 'path'
 nib = require 'nib'
 named = require 'vinyl-named'
@@ -13,19 +13,19 @@ del = require 'del'
 project =
   name: 'R2D2'
   src: 'src'
-  dest: 'dest'
+  dist: './dist/'
   webpack: require './webpack.config'
 
 scripts =
-  name: 'scripts'
-  src: '#{project.src}/scripts'
-  dest: '#{project.dest}/static/scripts'
-  exts: ['js', 'coffee', 'jsx']
+  name: "scripts"
+  src: "#{project.src}/scripts"
+  dist: "#{project.dist}/static/scripts"
+  exts: ['js', 'coffee']
 
 styles =
-  name: 'stylesheets'
-  src: '#{project.src}/scripts'
-  dest: '#{project.dest}/static/styles'
+  name: "stylesheets"
+  src: "#{project.src}/styles"
+  dist: "#{project.dist}/static/styles"
   exts: ['css', 'styl']
 
 assets =
@@ -34,12 +34,12 @@ assets =
   exts: [].concat(scripts.exts, styles.exts)
   glob: (bundle) ->
     if bundle
-      "#{project.dest}/#{bundle.name}/**/*.{#{bundle.exts.join(',')}}"
+      "#{bundle.src}/**/*.{#{bundle.exts.join(',')}}"
     else
-      "{#{bundle.dirs.join(',')}}/**/*.{#{bundle.exts.join(',')}}"
+      "{#{assets.dirs.join(',')}}/**/*.{#{assets.exts.join(',')}}"
 
-gulp.task 'default', ->
-  return
+gulp.task 'default', ['clean'], ->
+  gulp.start 'build'
 
 gulp.task 'build', ['webpack', 'style']
 
@@ -55,28 +55,30 @@ gulp.task 'webpack', ->
     .pipe named((file) ->
       dirname = path.basename(path.dirname(file.path))
       filename = path.basename(file.path, path.extname(file.path))
-      path.join(project.webpack))
-    .pipe webpack(project.webpack)
-    .pipe gulp.dest("#{project.dest}/#{scripts.name}")
-
+      path.join(dirname, filename))
+    .pipe webpack project.webpack
+    .pipe gulp.dest("#{project.dist}/scripts")
 
 gulp.task 'style', ->
   options =
     use: [nib()]
     compress: not argv.debug
-    sourcemap: { inline : argv.debug } if argv.debug
+    sourcemap: { inline: argv.debug } if argv.debug
   gulp.src assets.glob(styles)
     .pipe plumber()
     .pipe stylus(options)
-    .pipe gulp.dest("#{project.dist}/#{styles.name}")
+    .pipe gulp.dest("#{styles.dist}")
     .pipe browserSync.reload(stream: true)
 
 gulp.task 'browser-sync', ->
   port = argv.port or process.env.PORT
-  proxy = argv.proxy or 'localhost:#{port - 100}'
-  browserSync port: port, proxy: proxy, open: false
+  browserSync
+    port: port,
+    open: false
+    server:
+      baseDir: ["#{project.dist}"]
 
 gulp.task 'clean:dist', (done) ->
   del [
-    "#{project.dest}/**/*"
+    "#{project.dist}"
   ], done
