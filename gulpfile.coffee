@@ -28,26 +28,40 @@ styles =
   dist: "#{project.dist}/static/styles"
   exts: ['css', 'styl']
 
+html =
+  name: "html"
+  src: "{#{project.src},#{project.src}/views}"
+  exts: ['html', 'htm']
+  dist: "#{project.dist}"
+
+images =
+  name: "images"
+  src: "#{project.src}/images"
+  exts: ['jpg', 'png', 'gif', 'svg']
+  dist: "#{project.dist}/images"
+
 assets =
   name: 'assets'
-  dirs: [scripts.src, styles.src]
+  dirs: [].concat(scripts.src, styles.src)
   exts: [].concat(scripts.exts, styles.exts)
   glob: (bundle) ->
     if bundle
       "#{bundle.src}/**/*.{#{bundle.exts.join(',')}}"
     else
-      "{#{assets.dirs.join(',')}}/**/*.{#{assets.exts.join(',')}}"
+      dirs = [].concat(assets.dirs)
+      exts = [].concat(assets.exts)
+      "{#{dirs.join(',')}}/**/*.{#{exts.join(',')}}"
 
 gulp.task 'default', ['clean'], ->
   gulp.start 'build'
 
-gulp.task 'build', ['webpack', 'style']
+gulp.task 'build', ['collect', 'style', 'webpack']
 
 gulp.task 'clean', ['clean:dist']
 
 gulp.task 'watch', ['default'], ->
   gulp.start 'browser-sync'
-  gulp.watch assets.glob(), ['build']
+  gulp.watch "{#{assets.glob()},#{html.src}/**/*.#{html.exts.join(',')}}", ['build']
 
 gulp.task 'webpack', ->
   gulp.src assets.glob(scripts)
@@ -57,7 +71,8 @@ gulp.task 'webpack', ->
       filename = path.basename(file.path, path.extname(file.path))
       path.join(dirname, filename))
     .pipe webpack project.webpack
-    .pipe gulp.dest("#{project.dist}/scripts")
+    .pipe gulp.dest("#{scripts.dist}")
+    .pipe browserSync.reload(stream: true)
 
 gulp.task 'style', ->
   options =
@@ -69,6 +84,16 @@ gulp.task 'style', ->
     .pipe stylus(options)
     .pipe gulp.dest("#{styles.dist}")
     .pipe browserSync.reload(stream: true)
+
+gulp.task 'collect', ['collect:images', 'collect:html']
+
+gulp.task 'collect:images', ->
+  gulp.src "#{images.src}/**/*.{#{images.exts.join(',')}}"
+    .pipe gulp.dest "#{images.dist}/"
+
+gulp.task 'collect:html', ->
+  gulp.src "#{html.src}/**/*.{#{html.exts.join(',')}}"
+    .pipe gulp.dest "#{html.dist}/"
 
 gulp.task 'browser-sync', ->
   port = argv.port or process.env.PORT
