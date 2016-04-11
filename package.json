@@ -5,8 +5,21 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
+    "browser-sync": "^2.11.2",
+    "coffee-loader": "^0.7.2",
     "coffee-script": "^1.10.0",
-    "gulp": "^3.9.1"
+    "css-loader": "^0.23.1",
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-webpack": "^1.5.0",
+    "nib": "^1.1.0",
+    "plumber": "^0.4.8",
+    "stylus": "^0.54.2",
+    "stylus-loader": "^2.0.0",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^1.12.15",
+    "yargs": "^4.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
