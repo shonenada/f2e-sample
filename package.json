@@ -1,7 +1,7 @@
 {
-  "name": "R2D2",
+  "name": "F2E-Sample",
   "version": "0.1.0",
-  "description": "Data Visualization for Falcon.",
+  "description": "F2E Sample",
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
@@ -27,12 +27,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Vankeservice/R2D2.git"
+    "url": "https://github.com/shonenada/f2e-sample.git"
   },
   "author": "shonenada",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Vankeservice/R2D2/issues"
+    "url": "https://github.com/shonenada/f2e-sample/issues"
   },
-  "homepage": "https://github.com/Vankeservice/R2D2"
+  "homepage": "https://github.com/shonenada/f2e-sample"
 }

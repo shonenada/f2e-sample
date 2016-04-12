@@ -1,8 +1,7 @@
-R2D2
-====
+F2E Sample
+==========
 
-Data visualization for Falcon.
-
+F2E Sample
 
 Installation
 ------------

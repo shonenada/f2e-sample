@@ -11,7 +11,7 @@ del = require 'del'
 {argv} = require 'yargs'
 
 project =
-  name: 'R2D2'
+  name: 'F2E'
   src: 'src'
   dist: './dist/'
   webpack: require './webpack.config'
